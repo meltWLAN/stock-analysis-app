@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+
+{% block title %}{{ stock_info.name }} ({{ stock_code }}) - 股票分析系统{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-3">
+    <!-- 返回按钮 -->
+    <div class="mb-3">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> 返回首页
+        </a>
+    </div>
+    
+    <!-- 股票基本信息 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="card-title">{{ stock_info.name }} <small class="text-muted">{{ stock_code }}</small></h2>
+                    <p class="mb-0">{{ stock_info.industry }} | {{ stock_info.market }}</p>
+                </div>
+                <div class="text-end">
+                    <h3 class="price {{ 'text-danger' if stock_info.change_percent >= 0 else 'text-success' }}">
+                        {{ stock_info.current_price }}
+                    </h3>
+                    <p class="mb-0 {{ 'text-danger' if stock_info.change_percent >= 0 else 'text-success' }}">
+                        {{ stock_info.change }} ({{ stock_info.change_percent }}%)
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 基本指标 -->
+            <div class="row mt-3 key-metrics">
+                <div class="col-6 col-md-3 mb-2">
+                    <div class="metric-card">
+                        <div class="metric-name">市盈率(TTM)</div>
+                        <div class="metric-value">{{ stock_info.pe_ratio }}</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                    <div class="metric-card">
+                        <div class="metric-name">市净率</div>
+                        <div class="metric-value">{{ stock_info.pb_ratio }}</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                    <div class="metric-card">
+                        <div class="metric-name">股息率</div>
+                        <div class="metric-value">{{ stock_info.dividend_yield }}%</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                    <div class="metric-card">
+                        <div class="metric-name">市值</div>
+                        <div class="metric-value">{{ stock_info.market_cap }}亿</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 股票行情图表 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="mb-0">行情走势</h5>
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-primary active" onclick="changePeriod('1d')">日K</button>
+                <button type="button" class="btn btn-outline-primary" onclick="changePeriod('1w')">周K</button>
+                <button type="button" class="btn btn-outline-primary" onclick="changePeriod('1m')">月K</button>
+                <button type="button" class="btn btn-outline-primary" onclick="changePeriod('3m')">季K</button>
+                <button type="button" class="btn btn-outline-primary" onclick="changePeriod('1y')">年K</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="price-chart-loading" class="text-center py-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <p class="mt-2">加载价格数据中...</p>
+            </div>
+            <div id="price-chart-content" class="d-none">
+                <div id="price-chart" style="width:100%; height:400px;"></div>
+                
+                <!-- 数据验证结果 -->
+                <div id="data-validation-alert" class="alert alert-warning mt-3 d-none">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="validation-message"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 技术指标tab -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab" aria-controls="technical" aria-selected="true">技术指标</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="financial-tab" data-bs-toggle="tab" data-bs-target="#financial" type="button" role="tab" aria-controls="financial" aria-selected="false">财务数据</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="forecast-tab" data-bs-toggle="tab" data-bs-target="#forecast" type="button" role="tab" aria-controls="forecast" aria-selected="false">预测分析</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <!-- 技术指标面板 -->
+                <div class="tab-pane fade show active" id="technical" role="tabpanel" aria-labelledby="technical-tab">
+                    <div id="technical-loading" class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <p class="mt-2">加载技术指标中...</p>
+                    </div>
+                    <div id="technical-content" class="d-none">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>指标</th>
+                                        <th>数值</th>
+                                        <th>信号</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="technical-data">
+                                    <!-- 动态填充技术指标 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 财务数据面板 -->
+                <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
+                    <div id="financial-loading" class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <p class="mt-2">加载财务数据中...</p>
+                    </div>
+                    <div id="financial-content" class="d-none">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>报告期</th>
+                                        <th>营收(亿元)</th>
+                                        <th>净利润(亿元)</th>
+                                        <th>毛利率(%)</th>
+                                        <th>净利率(%)</th>
+                                        <th>ROE(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="financial-data">
+                                    <!-- 动态填充财务数据 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 财务数据验证结果 -->
+                        <div id="financial-validation-alert" class="alert alert-warning mt-3 d-none">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="financial-validation-message"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 预测分析面板 -->
+                <div class="tab-pane fade" id="forecast" role="tabpanel" aria-labelledby="forecast-tab">
+                    <div id="forecast-loading" class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <p class="mt-2">加载预测数据中...</p>
+                    </div>
+                    <div id="forecast-content" class="d-none">
+                        <div id="forecast-chart" style="width:100%; height:300px;"></div>
+                        
+                        <div class="mt-3">
+                            <h6>预测分析结果</h6>
+                            <p id="forecast-analysis">加载中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 回测功能卡片 -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">策略回测</h5>
+        </div>
+        <div class="card-body">
+            <form id="backtest-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="start-date" class="form-label">开始日期</label>
+                        <input type="date" class="form-control" id="start-date" value="{{ default_start_date }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="end-date" class="form-label">结束日期</label>
+                        <input type="date" class="form-control" id="end-date" value="{{ default_end_date }}">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="strategy-select" class="form-label">选择策略</label>
+                        <select class="form-select" id="strategy-select">
+                            <option value="ma_cross">均线交叉</option>
+                            <option value="macd">MACD策略</option>
+                            <option value="rsi">RSI策略</option>
+                            <option value="boll">布林带策略</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="init-capital" class="form-label">初始资金</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="init-capital" value="100000">
+                            <span class="input-group-text">元</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-2">
+                    <button type="button" class="btn btn-primary" onclick="runBacktest()">
+                        <i class="fas fa-play"></i> 运行回测
+                    </button>
+                </div>
+            </form>
+            
+            <!-- 回测结果区域 -->
+            <div id="backtest-results" class="mt-4 d-none">
+                <h6>回测结果</h6>
+                <div id="backtest-chart" style="width:100%; height:300px;"></div>
+                
+                <div class="row mt-3">
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="metric-card">
+                            <div class="metric-name">总收益率</div>
+                            <div class="metric-value" id="total-return">--</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="metric-card">
+                            <div class="metric-name">年化收益</div>
+                            <div class="metric-value" id="annual-return">--</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="metric-card">
+                            <div class="metric-name">最大回撤</div>
+                            <div class="metric-value" id="max-drawdown">--</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="metric-card">
+                            <div class="metric-name">夏普比率</div>
+                            <div class="metric-value" id="sharpe-ratio">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentStockCode = '{{ stock_code }}';
+    let currentPeriod = '1d';
+    
+    $(document).ready(function() {
+        // 加载股票价格数据
+        loadStockPrice(currentStockCode, currentPeriod);
+        
+        // 切换到技术指标标签页时加载数据
+        $('#technical-tab').on('shown.bs.tab', function() {
+            loadTechnicalIndicators(currentStockCode);
+        });
+        
+        // 切换到财务数据标签页时加载数据
+        $('#financial-tab').on('shown.bs.tab', function() {
+            loadFinancialData(currentStockCode);
+        });
+        
+        // 切换到预测分析标签页时加载数据
+        $('#forecast-tab').on('shown.bs.tab', function() {
+            loadForecastData(currentStockCode);
+        });
+    });
+    
+    // 切换K线周期
+    function changePeriod(period) {
+        currentPeriod = period;
+        $('.btn-group .btn').removeClass('active');
+        $(`.btn-group .btn:contains('${period.toUpperCase()}')`).addClass('active');
+        loadStockPrice(currentStockCode, period);
+    }
+    
+    // 加载股票价格数据
+    function loadStockPrice(code, period) {
+        $('#price-chart-loading').removeClass('d-none');
+        $('#price-chart-content').addClass('d-none');
+        
+        // 根据周期计算开始日期
+        let startDate = new Date();
+        switch(period) {
+            case '1d':
+                startDate.setDate(startDate.getDate() - 90); // 默认显示90天
+                break;
+            case '1w':
+                startDate.setMonth(startDate.getMonth() - 6);
+                break;
+            case '1m':
+                startDate.setFullYear(startDate.getFullYear() - 2);
+                break;
+            case '3m':
+                startDate.setFullYear(startDate.getFullYear() - 5);
+                break;
+            case '1y':
+                startDate.setFullYear(startDate.getFullYear() - 10);
+                break;
+        }
+        
+        const startDateStr = startDate.toISOString().split('T')[0];
+        const endDateStr = new Date().toISOString().split('T')[0];
+        
+        $.ajax({
+            url: `/api/stock/price?code=${code}&start_date=${startDateStr}&end_date=${endDateStr}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // 处理验证结果
+                    const validation = response.validation;
+                    if (validation && !validation.valid) {
+                        $('#validation-message').text(`数据质量问题: ${validation.errors.join(', ')}`);
+                        $('#data-validation-alert').removeClass('d-none');
+                    } else if (validation && validation.warnings && validation.warnings.length > 0) {
+                        $('#validation-message').text(`数据警告: ${validation.warnings.join(', ')}`);
+                        $('#data-validation-alert').removeClass('d-none');
+                    } else {
+                        $('#data-validation-alert').addClass('d-none');
+                    }
+                    
+                    // 绘制K线图
+                    if (response.chart) {
+                        var chartData = JSON.parse(response.chart);
+                        Plotly.newPlot('price-chart', chartData.data, chartData.layout);
+                    }
+                    
+                    $('#price-chart-loading').addClass('d-none');
+                    $('#price-chart-content').removeClass('d-none');
+                } else {
+                    showToast('错误', response.message || '加载价格数据失败');
+                    $('#price-chart-loading').addClass('d-none');
+                }
+            },
+            error: function() {
+                showToast('错误', '网络错误，请稍后再试');
+                $('#price-chart-loading').addClass('d-none');
+            }
+        });
+    }
+    
+    // 加载技术指标
+    function loadTechnicalIndicators(code) {
+        $('#technical-loading').removeClass('d-none');
+        $('#technical-content').addClass('d-none');
+        
+        // 模拟数据，实际应从API获取
+        const mockTechnicalData = [
+            { indicator: 'MA5', value: '32.45', signal: 'buy', signal_class: 'text-danger' },
+            { indicator: 'MA10', value: '31.20', signal: 'buy', signal_class: 'text-danger' },
+            { indicator: 'MA20', value: '30.85', signal: 'buy', signal_class: 'text-danger' },
+            { indicator: 'MACD', value: '0.75', signal: 'buy', signal_class: 'text-danger' },
+            { indicator: 'RSI', value: '68.5', signal: 'neutral', signal_class: 'text-warning' },
+            { indicator: 'KDJ', value: 'K:80.2, D:75.4', signal: 'sell', signal_class: 'text-success' },
+            { indicator: 'BOLL', value: 'UP:33.4, MID:31.2, LOW:29.0', signal: 'neutral', signal_class: 'text-warning' }
+        ];
+        
+        setTimeout(function() {
+            const $tableBody = $('#technical-data');
+            $tableBody.empty();
+            
+            mockTechnicalData.forEach(item => {
+                $tableBody.append(`
+                    <tr>
+                        <td>${item.indicator}</td>
+                        <td>${item.value}</td>
+                        <td class="${item.signal_class}">${item.signal}</td>
+                    </tr>
+                `);
+            });
+            
+            $('#technical-loading').addClass('d-none');
+            $('#technical-content').removeClass('d-none');
+        }, 800);
+    }
+    
+    // 加载财务数据
+    function loadFinancialData(code) {
+        $('#financial-loading').removeClass('d-none');
+        $('#financial-content').addClass('d-none');
+        
+        $.ajax({
+            url: `/api/stock/financial?code=${code}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    const $tableBody = $('#financial-data');
+                    $tableBody.empty();
+                    
+                    response.data.forEach(item => {
+                        $tableBody.append(`
+                            <tr>
+                                <td>${item.report_date}</td>
+                                <td>${(item.revenue / 100000000).toFixed(2)}</td>
+                                <td>${(item.net_profit / 100000000).toFixed(2)}</td>
+                                <td>${(item.gross_margin * 100).toFixed(2)}</td>
+                                <td>${(item.net_margin * 100).toFixed(2)}</td>
+                                <td>${(item.roe * 100).toFixed(2)}</td>
+                            </tr>
+                        `);
+                    });
+                    
+                    // 处理验证结果
+                    const validation = response.validation;
+                    if (validation && !validation.valid) {
+                        $('#financial-validation-message').text(`数据质量问题: ${validation.errors.join(', ')}`);
+                        $('#financial-validation-alert').removeClass('d-none');
+                    } else if (validation && validation.warnings && validation.warnings.length > 0) {
+                        $('#financial-validation-message').text(`数据警告: ${validation.warnings.join(', ')}`);
+                        $('#financial-validation-alert').removeClass('d-none');
+                    } else {
+                        $('#financial-validation-alert').addClass('d-none');
+                    }
+                    
+                    $('#financial-loading').addClass('d-none');
+                    $('#financial-content').removeClass('d-none');
+                } else {
+                    showToast('错误', response.message || '加载财务数据失败');
+                    $('#financial-loading').addClass('d-none');
+                }
+            },
+            error: function() {
+                showToast('错误', '网络错误，请稍后再试');
+                $('#financial-loading').addClass('d-none');
+            }
+        });
+    }
+    
+    // 加载预测数据
+    function loadForecastData(code) {
+        $('#forecast-loading').removeClass('d-none');
+        $('#forecast-content').addClass('d-none');
+        
+        // 模拟数据，实际应从API获取
+        setTimeout(function() {
+            // 创建预测图表
+            const trace1 = {
+                x: ['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01', '2023-05-01', '2023-06-01'],
+                y: [31.2, 32.5, 30.8, 33.4, 32.7, 34.1],
+                type: 'scatter',
+                mode: 'lines',
+                name: '历史价格',
+                line: {
+                    color: 'blue'
+                }
+            };
+            
+            const trace2 = {
+                x: ['2023-06-01', '2023-07-01', '2023-08-01', '2023-09-01', '2023-10-01', '2023-11-01'],
+                y: [34.1, 35.2, 36.4, 37.8, 39.1, 40.3],
+                type: 'scatter',
+                mode: 'lines',
+                name: '预测价格',
+                line: {
+                    color: 'red',
+                    dash: 'dash'
+                }
+            };
+            
+            const data = [trace1, trace2];
+            const layout = {
+                title: '价格预测',
+                xaxis: {
+                    title: '日期'
+                },
+                yaxis: {
+                    title: '价格'
+                },
+                margin: {
+                    l: 40,
+                    r: 20,
+                    t: 40,
+                    b: 40
+                }
+            };
+            
+            Plotly.newPlot('forecast-chart', data, layout);
+            
+            // 更新预测分析
+            $('#forecast-analysis').html(`
+                基于历史数据分析，预计未来6个月${currentStockCode}的股价有望上涨18.2%，达到40.3元左右。
+                主要支撑因素：<br>
+                1. 行业景气度持续向好<br>
+                2. 公司基本面稳健，营收增长显著<br>
+                3. 技术指标呈现上升趋势<br>
+                <br>
+                风险提示：市场波动风险、行业政策变化风险、公司业绩不及预期风险
+            `);
+            
+            $('#forecast-loading').addClass('d-none');
+            $('#forecast-content').removeClass('d-none');
+        }, 1000);
+    }
+    
+    // 运行回测
+    function runBacktest() {
+        const startDate = $('#start-date').val();
+        const endDate = $('#end-date').val();
+        const strategy = $('#strategy-select').val();
+        const initCapital = $('#init-capital').val();
+        
+        if (!startDate || !endDate) {
+            showToast('提示', '请选择回测日期范围');
+            return;
+        }
+        
+        $('#backtest-results').addClass('d-none');
+        showToast('提示', '正在执行回测，请稍候...');
+        
+        // 回测参数
+        const params = {
+            stock_code: currentStockCode,
+            start_date: startDate,
+            end_date: endDate,
+            strategy: strategy,
+            params: {
+                init_capital: parseInt(initCapital)
+            }
+        };
+        
+        $.ajax({
+            url: '/api/backtest/simple',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(params),
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // 更新回测结果
+                    $('#total-return').text(response.data.total_return + '%');
+                    $('#annual-return').text(response.data.annual_return + '%');
+                    $('#max-drawdown').text(response.data.max_drawdown + '%');
+                    $('#sharpe-ratio').text(response.data.sharpe_ratio);
+                    
+                    // 绘制回测图表
+                    if (response.chart) {
+                        var chartData = JSON.parse(response.chart);
+                        Plotly.newPlot('backtest-chart', chartData.data, chartData.layout);
+                    }
+                    
+                    $('#backtest-results').removeClass('d-none');
+                } else {
+                    showToast('错误', response.message || '回测执行失败');
+                }
+            },
+            error: function() {
+                showToast('错误', '网络错误，请稍后再试');
+            }
+        });
+    }
+    
+    // 显示Toast消息
+    function showToast(title, message) {
+        $('#toast-title').text(title);
+        $('#toast-message').text(message);
+        
+        const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+        toast.show();
+    }
+</script>
+{% endblock %} 

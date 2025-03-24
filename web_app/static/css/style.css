@@ -1,0 +1,296 @@
+/* 全局样式 */
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #f5f5f5;
+    --success-color: #4caf50;
+    --danger-color: #f44336;
+    --warning-color: #ff9800;
+    --text-color: #333;
+    --light-text: #888;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--text-color);
+    background-color: #f9f9f9;
+    padding-bottom: 60px; /* 为移动端底部工具栏留出空间 */
+}
+
+/* 内容容器 */
+.content-container {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* 卡片样式 */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+    border: none;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* 指数卡片 */
+.market-indices {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.index-card {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.index-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.index-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.index-change {
+    font-size: 0.9rem;
+}
+
+.index-change.up {
+    color: var(--danger-color);
+}
+
+.index-change.down {
+    color: var(--success-color);
+}
+
+/* 指标卡片 */
+.metric-card {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    height: 100%;
+}
+
+.metric-name {
+    font-size: 0.8rem;
+    color: var(--light-text);
+}
+
+.metric-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* 搜索建议 */
+.suggestions-container {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background-color: var(--secondary-color);
+}
+
+.suggestion-code {
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+/* 移动端底部工具栏 */
+.mobile-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.btn-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.btn-toolbar i {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+}
+
+.btn-toolbar:hover, .btn-toolbar:active {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Loading遮罩 */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .card-header {
+        padding: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    h2.card-title {
+        font-size: 1.5rem;
+    }
+    
+    .metric-card {
+        padding: 8px;
+    }
+    
+    .metric-name {
+        font-size: 0.7rem;
+    }
+    
+    .metric-value {
+        font-size: 0.9rem;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* 表格适应小屏幕 */
+    .table th, .table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet和桌面适配 */
+@media (min-width: 769px) {
+    .content-container {
+        max-width: 1140px;
+        margin: 0 auto;
+    }
+    
+    body {
+        padding-bottom: 0;
+    }
+    
+    .card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* 股票详情页样式 */
+.price {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* 图表容器 */
+#price-chart, #forecast-chart, #backtest-chart, #market-heatmap {
+    border-radius: 8px;
+    background-color: white;
+}
+
+/* Loading状态 */
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Tab样式 */
+.nav-tabs .nav-link {
+    color: var(--text-color);
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: bold;
+    border-bottom: 2px solid var(--primary-color);
+    background-color: transparent;
+}
+
+/* 安全模式 - 支持夜间模式 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #f5f5f5;
+    }
+    
+    .card, .card-header, .suggestions-container, .mobile-toolbar {
+        background-color: #1e1e1e;
+    }
+    
+    .card-header, .mobile-toolbar {
+        border-color: #333;
+    }
+    
+    .index-card, .metric-card {
+        background-color: #2a2a2a;
+    }
+    
+    .suggestion-item:hover {
+        background-color: #2a2a2a;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #f5f5f5;
+    }
+    
+    .table {
+        color: #f5f5f5;
+    }
+    
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+} 

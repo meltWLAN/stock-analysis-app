@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>{% block title %}股票分析系统{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 自定义CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Plotly图表库 -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <!-- 适配移动设备图标 -->
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/icon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-chart-line"></i> 股票分析系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home"></i> 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadMarketOverview()">
+                            <i class="fas fa-globe"></i> 市场概览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSearchPanel()">
+                            <i class="fas fa-search"></i> 股票查询
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showBacktestPanel()">
+                            <i class="fas fa-chart-bar"></i> 策略回测
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSettings()">
+                            <i class="fas fa-cog"></i> 设置
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid content-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- 底部工具栏 -->
+    <div class="mobile-toolbar d-md-none">
+        <div class="row">
+            <div class="col">
+                <a href="{{ url_for('index') }}" class="btn-toolbar">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+            </div>
+            <div class="col">
+                <a href="#" onclick="loadMarketOverview()" class="btn-toolbar">
+                    <i class="fas fa-globe"></i>
+                    <span>市场</span>
+                </a>
+            </div>
+            <div class="col">
+                <a href="#" onclick="showSearchPanel()" class="btn-toolbar">
+                    <i class="fas fa-search"></i>
+                    <span>查询</span>
+                </a>
+            </div>
+            <div class="col">
+                <a href="#" onclick="showBacktestPanel()" class="btn-toolbar">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>回测</span>
+                </a>
+            </div>
+            <div class="col">
+                <a href="#" onclick="showSettings()" class="btn-toolbar">
+                    <i class="fas fa-user"></i>
+                    <span>我的</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast消息组件 -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong class="me-auto" id="toast-title">提示</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                操作成功
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading遮罩 -->
+    <div id="loading-overlay" class="d-none">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">加载中...</span>
+        </div>
+        <p class="text-light mt-2">数据加载中...</p>
+    </div>
+
+    <!-- jQuery和Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 自定义JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

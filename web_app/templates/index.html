@@ -1,0 +1,299 @@
+{% extends "layout.html" %}
+
+{% block title %}智能股票分析平台 - 市场概览{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-primary d-flex align-items-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <div>
+                欢迎使用智能股票分析平台，这里提供基于AI的股票数据分析和预测服务。
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 市场指数 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">市场指数</h5>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-secondary">日</button>
+                    <button type="button" class="btn btn-outline-secondary active">周</button>
+                    <button type="button" class="btn btn-outline-secondary">月</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row market-indices">
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">上证指数</div>
+                            <div class="index-value">3,246.27</div>
+                            <div class="index-change up">+0.78%</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">深证成指</div>
+                            <div class="index-value">10,638.75</div>
+                            <div class="index-change up">+1.23%</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">创业板指</div>
+                            <div class="index-value">2,168.59</div>
+                            <div class="index-change up">+1.57%</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">沪深300</div>
+                            <div class="index-value">4,112.68</div>
+                            <div class="index-change up">+0.92%</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">中证500</div>
+                            <div class="index-value">6,758.32</div>
+                            <div class="index-change up">+0.67%</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2 mb-3">
+                        <div class="index-card">
+                            <div class="text-muted">科创50</div>
+                            <div class="index-value">1,056.43</div>
+                            <div class="index-change down">-0.28%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 热点板块和AI推荐 -->
+<div class="row mb-4">
+    <!-- 左侧：热点板块 -->
+    <div class="col-md-8 mb-4 mb-md-0">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0">热点板块</h5>
+            </div>
+            <div class="card-body">
+                <div id="market-heatmap" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 右侧：AI推荐 -->
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0">AI智能推荐</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small class="text-muted">基于当前市场环境推荐</small>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>600036</strong> 招商银行
+                            </div>
+                            <span class="badge bg-success">买入</span>
+                        </div>
+                        <small class="text-muted">银行业绩稳健，估值处于低位</small>
+                    </li>
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>000858</strong> 五粮液
+                            </div>
+                            <span class="badge bg-primary">增持</span>
+                        </div>
+                        <small class="text-muted">消费板块回暖，白酒龙头受益</small>
+                    </li>
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>002415</strong> 海康威视
+                            </div>
+                            <span class="badge bg-success">买入</span>
+                        </div>
+                        <small class="text-muted">AI应用场景扩展，业绩持续增长</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 市场概览指标 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">市场概览</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-name">市场情绪指数</div>
+                            <div class="metric-value">67 <small class="text-success">↑</small></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-name">成交量(亿)</div>
+                            <div class="metric-value">5,426 <small class="text-success">↑</small></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-name">上涨家数</div>
+                            <div class="metric-value">2,845 <small class="text-success">↑</small></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-name">下跌家数</div>
+                            <div class="metric-value">952 <small class="text-danger">↓</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 智能资讯 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">智能资讯</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">央行降准0.5个百分点，释放长期资金约1万亿元</h6>
+                                <p class="text-muted mb-0 small">央行决定降低金融机构存款准备金率0.5个百分点，此次下调后，金融机构加权平均存款准备金率约为7.4%。</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">新</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">两市融资余额增加56.98亿元</h6>
+                                <p class="text-muted mb-0 small">截至3月29日，上交所融资余额为8547.93亿元，较前一交易日增加28.53亿元；深交所融资余额为7069.7亿元，较前一交易日增加28.45亿元。</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">AI概念股持续活跃，寒武纪、中科曙光涨停</h6>
+                                <p class="text-muted mb-0 small">在ChatGPT和AIGC持续火热的背景下，相关产业链上的芯片、算力基础设施等概念股表现活跃，多只个股涨停。</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 热力图
+    var heatmapOptions = {
+        series: [{
+            name: '涨跌幅',
+            data: [
+                { x: '银行', y: 2.4 },
+                { x: '保险', y: 1.8 },
+                { x: '证券', y: 3.5 },
+                { x: '电子', y: -1.2 },
+                { x: '医药', y: -0.5 },
+                { x: '新能源', y: 4.2 },
+                { x: '白酒', y: 2.1 },
+                { x: '家电', y: 0.8 },
+                { x: '钢铁', y: -2.1 },
+                { x: '有色', y: 1.4 },
+                { x: '半导体', y: 3.8 },
+                { x: '电力', y: 0.6 },
+                { x: '房地产', y: -1.5 },
+                { x: '军工', y: 2.7 },
+                { x: '软件', y: 3.1 },
+                { x: '建筑', y: 0.3 },
+                { x: '通信', y: 1.9 },
+                { x: '汽车', y: 2.3 },
+            ]
+        }],
+        chart: {
+            height: 300,
+            type: 'heatmap',
+            toolbar: {
+                show: false
+            }
+        },
+        plotOptions: {
+            heatmap: {
+                shadeIntensity: 0.5,
+                colorScale: {
+                    ranges: [{
+                            from: -5,
+                            to: 0,
+                            name: '下跌',
+                            color: '#00A100'
+                        },
+                        {
+                            from: 0,
+                            to: 5,
+                            name: '上涨',
+                            color: '#FF0000'
+                        }
+                    ]
+                }
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val) {
+                return val + '%';
+            }
+        },
+        title: {
+            text: '',
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + '%';
+                }
+            }
+        }
+    };
+
+    var heatmapChart = new ApexCharts(document.querySelector("#market-heatmap"), heatmapOptions);
+    heatmapChart.render();
+});
+</script>
+{% endblock %} 

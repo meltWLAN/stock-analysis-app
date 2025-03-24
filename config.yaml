@@ -1,0 +1,67 @@
+# 应用程序配置文件
+
+# 应用程序通用配置
+app:
+  name: "StockAnalyzer"
+  version: "1.0.0"
+  debug: false
+  log_level: "INFO"
+
+# 数据源配置
+data_sources:
+  # 聚宽数据源配置
+  joinquant:
+    enabled: true
+    priority: 0
+    weight: 1.0
+    max_retry: 3
+    timeout: 30
+    min_date: "2023-01-01"
+    max_date: "2024-12-31"
+    # 安全凭据应通过环境变量设置
+    # username: 通过环境变量 JOINQUANT_USERNAME 设置
+    # password: 通过环境变量 JOINQUANT_PASSWORD 设置
+  
+  # Tushare数据源配置
+  tushare:
+    enabled: true
+    priority: 1
+    weight: 0.8
+    max_retry: 3
+    timeout: 30
+    # token: 通过环境变量 TUSHARE_TOKEN 设置
+  
+  # AKShare数据源配置
+  akshare:
+    enabled: true
+    priority: 2
+    weight: 0.7
+    max_retry: 3
+    timeout: 30
+
+# 缓存配置
+cache:
+  enabled: true
+  memory_size: 256  # MB
+  disk_dir: "./cache"
+  default_expiry: 3600  # 秒
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/app.log"
+  max_size: 10485760  # 10MB
+  backup_count: 5
+
+# 监控配置
+monitoring:
+  enabled: true
+  metrics_port: 8000
+  collect_interval: 60  # 秒
+  health_check_interval: 300  # 秒
+
+# 事件配置
+events:
+  max_workers: 5
+  queue_size: 1000 
