@@ -28,6 +28,7 @@ logs/
 
 # Environment
 .env
+.venv
 venv/
 ENV/
 
@@ -47,4 +48,4 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-stock-analysis-app/ 
+stock-analysis-app/

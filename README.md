@@ -1,6 +1,6 @@
-# 智能股票分析平台
+# 智能股票分析平台 - 移动端优化版
 
-基于AI的股票数据分析和预测平台，支持基本股票数据分析、趋势预测和投资建议。
+基于AI的股票数据分析和预测平台，支持基本股票数据分析、趋势预测和投资建议。专为手机用户设计，提供移动端优化体验。
 
 ## 功能特点
 
@@ -27,8 +27,8 @@
 
 1. 克隆仓库
 ```bash
-git clone https://github.com/yourusername/stock-analysis-platform.git
-cd stock-analysis-platform
+git clone https://github.com/meltWLAN/stock-analysis-app.git
+cd stock-analysis-app
 ```
 
 2. 安装依赖
