@@ -11,10 +11,10 @@
 
 1. 登录PythonAnywhere后，点击仪表板中的**Web**选项卡
 2. 点击**添加一个新的Web应用**按钮
-3. 选择域名（免费账号将使用yourname.pythonanywhere.com格式）
+3. 选择域名（您的域名将是 wz2025.pythonanywhere.com）
 4. 选择Python版本（推荐Python 3.8或更高版本）
 5. 选择**Flask**框架
-6. 修改配置路径：在源代码目录下输入`/home/YOUR_USERNAME/stock-analysis-app`
+6. 修改配置路径：在源代码目录下输入`/home/WZ2025/stock-analysis-app`
 
 ## 步骤3: 上传代码到PythonAnywhere
 
@@ -52,13 +52,13 @@ pip3 install --user -r requirements.txt
 ## 步骤4: 配置WSGI文件
 
 1. 在Web选项卡中，点击WSGI配置文件的链接
-2. 替换内容为以下代码（记得替换`YOUR_USERNAME`为您的实际用户名）：
+2. 替换内容为以下代码（已为您的账号配置好）：
 
 ```python
 import sys
 
 # 添加应用目录到路径
-path = '/home/YOUR_USERNAME/stock-analysis-app'
+path = '/home/WZ2025/stock-analysis-app'
 if path not in sys.path:
     sys.path.append(path)
 
@@ -69,12 +69,12 @@ from app import app as application
 
 1. 在Web选项卡的**Static Files**部分添加以下配置：
    - URL: `/static/`
-   - Directory: `/home/YOUR_USERNAME/stock-analysis-app/web_app/static`
+   - Directory: `/home/WZ2025/stock-analysis-app/web_app/static`
 
 ## 步骤6: 重载Web应用
 
 1. 在Web选项卡中点击**重载**按钮
-2. 等待几秒钟，然后访问您的域名（例如：`yourname.pythonanywhere.com`）
+2. 等待几秒钟，然后访问您的域名：`wz2025.pythonanywhere.com`
 
 ## 步骤7: 调试和问题解决
 
@@ -96,7 +96,7 @@ from app import app as application
 
 部署完成后，您可以通过以下地址访问应用：
 
-- 网址: `http://YOUR_USERNAME.pythonanywhere.com`
+- 网址: `http://wz2025.pythonanywhere.com`
 - 使用任何现代手机浏览器访问以获得最佳体验
 
 ## 自动化更新（可选）
@@ -107,7 +107,7 @@ from app import app as application
 2. 添加一个每日任务，命令如下：
 
 ```bash
-cd ~/stock-analysis-app && git pull && pip3 install --user -r requirements.txt && touch /var/www/YOUR_USERNAME_pythonanywhere_com_wsgi.py
+cd ~/stock-analysis-app && git pull && pip3 install --user -r requirements.txt && touch /var/www/wz2025_pythonanywhere_com_wsgi.py
 ```
 
 这将每天从GitHub拉取最新代码并重新加载应用。 

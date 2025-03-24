@@ -1,7 +1,7 @@
 import sys
 
 # 添加应用目录到路径
-path = '/home/YOUR_PYTHONANYWHERE_USERNAME/stock-analysis-app'
+path = '/home/WZ2025/stock-analysis-app'
 if path not in sys.path:
     sys.path.append(path)
 
