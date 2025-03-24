@@ -6,19 +6,22 @@ path = '/home/WZ2025/wz250323001'
 if path not in sys.path:
     sys.path.append(path)
 
-# 调试信息（部署后可以注释掉这些行）
-print("Python 路径:")
-for p in sys.path:
-    print(" - " + p)
+# 创建一个最简单的Flask应用
+from flask import Flask
 
-print("当前目录: " + os.getcwd())
-print("目录内容:")
-for f in os.listdir(path):
-    print(" - " + f)
+app = Flask(__name__)
 
-# 导入应用
-from app import app as application  # noqa
+@app.route('/')
+def hello():
+    return """
+    <h1>智能股票分析平台</h1>
+    <p>基本Flask应用已成功加载!</p>
+    <p>当前路径: """ + os.getcwd() + """</p>
+    <p>Python路径:</p>
+    <ul>
+    """ + "".join(["<li>" + p + "</li>" for p in sys.path]) + """
+    </ul>
+    """
 
-# 如果使用了.env文件或环境变量
-# 建议在PythonAnywhere的Web选项卡中设置环境变量
-# 而不是在这里设置，以确保安全 
+# 应用入口
+application = app 
